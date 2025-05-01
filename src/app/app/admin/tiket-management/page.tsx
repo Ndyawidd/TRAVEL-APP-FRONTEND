@@ -2,41 +2,81 @@
 
 import TicketForm from "../../../components/TicketForm";
 import TicketTable from "../../../components/TicketTable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const TicketManagementPage = () => {
-  const [tickets, setTickets] = useState([
-    {
-      id: 1,
-      name: "Trip to Bali",
-      price: 2500000,
-      capacity: 20,
-      date: "2025-05-01",
-    },
-  ]);
+  const [tickets, setTickets] = useState<any[]>([]);
+
+  const fetchTickets = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/tickets");
+      const data = await res.json();
+      setTickets(data);
+    } catch (err) {
+      console.error("Gagal mengambil tiket:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
 
   const [editingTicket, setEditingTicket] = useState<any | null>(null);
 
   const handleAddTicket = (newTicket: any) => {
-    setTickets([...tickets, { ...newTicket, id: Date.now() }]);
+    setTickets((prev) => [...prev, newTicket]);
   };
 
-  const handleUpdateTicket = (updatedTicket: any) => {
-    setTickets(
-      tickets.map((ticket) =>
-        ticket.id === updatedTicket.id ? updatedTicket : ticket
-      )
-    );
-    setEditingTicket(null); // reset form
+  const handleUpdateTicket = async (updatedTicket: any) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets/${updatedTicket.ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTicket),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Gagal update tiket");
+      }
+  
+      const result = await res.json();
+      setTickets((prev) =>
+        prev.map((ticket) =>
+          ticket.ticketId === updatedTicket.ticketId ? result : ticket
+        )
+      );
+      setEditingTicket(null); // Reset edit state
+      alert("Tiket berhasil diupdate!");
+    } catch (err: any) {
+      console.error("Gagal update tiket:", err);
+      alert(err.message);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setTickets(tickets.filter((ticket) => ticket.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}`, {
+        method: "DELETE",
+      });
+  
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Gagal menghapus tiket");
+      }
+  
+      setTickets((prev) => prev.filter((ticket) => ticket.ticketId !== id));
+      alert("Tiket berhasil dihapus!");
+    } catch (err: any) {
+      console.error("Gagal hapus tiket:", err);
+      alert(err.message);
+    }
   };
-
+  
   const handleEdit = (ticket: any) => {
     setEditingTicket(ticket);
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -49,17 +89,22 @@ const TicketManagementPage = () => {
             Tambahkan tiket baru atau kelola tiket yang sudah ada.
           </p>
           <TicketForm
-          onAddTicket={handleAddTicket}
-          onUpdateTicket={handleUpdateTicket}
-          editingTicket={editingTicket}
-        />
+            onAddTicket={handleAddTicket}
+            onSuccess={fetchTickets}
+            editingTicket={editingTicket}
+            onCancelEdit={() => setEditingTicket(null)}
+          />
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-md">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Daftar Tiket
           </h2>
-          <TicketTable tickets={tickets} onDelete={handleDelete} onEdit={handleEdit} />
+          <TicketTable
+            tickets={tickets}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         </div>
       </div>
     </div>

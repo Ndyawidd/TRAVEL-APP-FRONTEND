@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
+  images: {
+    domains: ["via.placeholder.com"], // tambahkan domain yang kamu izinkan
+  },
 };
 
 export default nextConfig;

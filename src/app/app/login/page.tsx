@@ -8,11 +8,40 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  // const handleLogin = (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   // Tidak perlu validasi - langsung redirect ke halaman admin
+  //   router.push("/app/admin");
+  // };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Tidak perlu validasi - langsung redirect ke halaman admin
-    router.push("/app/admin");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      console.log("STATUS", res.status);
+
+      const data = await res.json();
+      console.log("RESPONSE DATA", data);
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Login gagal");
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      router.push("/app/admin");
+    } catch (err: any) {
+      console.error("Login Error Catch:", err);
+      alert(err.message || "Username atau password salah");
+    }
   };
 
   return (
@@ -28,7 +57,7 @@ const LoginPage = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
               required
             />
           </div>
@@ -38,7 +67,7 @@ const LoginPage = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
               required
             />
           </div>
