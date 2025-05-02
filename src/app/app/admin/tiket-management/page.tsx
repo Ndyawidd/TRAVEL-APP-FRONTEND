@@ -1,7 +1,7 @@
 "use client";
 
-import TicketForm from "../../../components/TicketForm";
-import TicketTable from "../../../components/TicketTable";
+import TicketForm from "../../../../components/admin/TicketForm";
+import TicketTable from "../../../../components/admin/TicketTable";
 import { useState, useEffect } from "react";
 
 const TicketManagementPage = () => {
@@ -29,17 +29,20 @@ const TicketManagementPage = () => {
 
   const handleUpdateTicket = async (updatedTicket: any) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets/${updatedTicket.ticketId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTicket),
-      });
-  
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tickets/${updatedTicket.ticketId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedTicket),
+        }
+      );
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Gagal update tiket");
       }
-  
+
       const result = await res.json();
       setTickets((prev) =>
         prev.map((ticket) =>
@@ -56,15 +59,18 @@ const TicketManagementPage = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}`, {
-        method: "DELETE",
-      });
-  
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Gagal menghapus tiket");
       }
-  
+
       setTickets((prev) => prev.filter((ticket) => ticket.ticketId !== id));
       alert("Tiket berhasil dihapus!");
     } catch (err: any) {
@@ -72,11 +78,10 @@ const TicketManagementPage = () => {
       alert(err.message);
     }
   };
-  
+
   const handleEdit = (ticket: any) => {
     setEditingTicket(ticket);
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

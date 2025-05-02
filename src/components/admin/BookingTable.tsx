@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Button from "@/app/components/ui/button";
-import Image from "next/image";
+import Button from "@/components/ui/button";
 
 type Booking = {
   orderId: string;

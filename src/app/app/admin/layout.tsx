@@ -29,7 +29,6 @@ export default function AdminLayout({
     {
       name: "Manajemen Tiket",
       href: "/app/admin/tiket-management",
-      // href: "fetch(`${process.env.NEXT_PUBLIC_API_URL}/tiket-management",
       icon: <Ticket size={18} />,
     },
     {

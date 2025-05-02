@@ -1,41 +1,55 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LandingPage = () => {
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white px-4">
-      {/* Header */}
-      <span className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm mb-4">
-        Explore the world with ease
-      </span>
+    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-blue-100 to-blue-100">
+      <header className="flex justify-between items-center px-8 py-6">
+        <h1 className="text-3xl font-bold text-blue-800 tracking-wide">
+          TripMate
+        </h1>
+        <div className="space-x-4">
+          <button
+            onClick={() => router.push("app/login")}
+            className="px-4 py-2 bg-white text-blue-700 font-semibold rounded-full border border-blue-500 hover:bg-blue-50 transition"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => router.push("app/register")}
+            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition"
+          >
+            Daftar
+          </button>
+        </div>
+      </header>
 
-      {/* Title */}
-      <h1 className="text-5xl font-bold text-center text-gray-800">
-        Welcome to <span className="text-blue-600">TripMate</span>
-      </h1>
+      <main className="flex flex-col lg:flex-row items-center justify-center px-8 lg:px-20 py-12 gap-10">
+        <div className="text-center lg:text-left max-w-xl">
+          <h2 className="text-4xl font-extrabold text-gray-800 leading-snug mb-4">
+            Jelajahi Dunia Bersama{" "}
+            <span className="text-blue-600">TripMate</span>
+          </h2>
+          <p className="text-gray-600 text-lg mb-6">
+            Temukan destinasi impianmu, kelola perjalanan, dan nikmati
+            pengalaman tak terlupakan dengan bantuan platform travel terbaik
+            kami.
+          </p>
+          <button
+            onClick={() => router.push("app/login")}
+            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition"
+          >
+            Mulai Sekarang
+          </button>
+        </div>
+      </main>
 
-      {/* Subtitle */}
-      <p className="text-gray-600 text-lg text-center mt-4 max-w-2xl">
-        Discover amazing destinations, book your trips, and create unforgettable stories with us.
-      </p>
-
-      {/* CTA */}
-      <div className="mt-6 flex space-x-4">
-        <Link href="/app/login">
-          <span className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 cursor-pointer">
-            Login as Admin
-          </span>
-        </Link>
-        <Link href="/#features">
-          <span className="border border-gray-700 text-gray-700 px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 cursor-pointer">
-            Learn More
-          </span>
-        </Link>
-      </div>
-
-      {/* Footer */}
-      <p className="text-gray-400 text-sm mt-6">Start your journey today 🚀</p>
+      <footer className="text-center py-6 text-gray-500 text-sm">
+        © {new Date().getFullYear()} TripMate. All rights reserved.
+      </footer>
     </div>
   );
 };
