@@ -36,7 +36,7 @@ const AddSaldoPage = () => {
     try {
       await updateUserProfile(userId, { balance: newBalance });
       alert("Saldo berhasil ditambahkan!");
-      router.push("/app/user/profile");
+      router.back();
     } catch (err) {
       console.error("Failed to top up:", err);
       alert("Gagal menambahkan saldo");

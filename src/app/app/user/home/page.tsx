@@ -8,8 +8,14 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from "@/services/wishlistService";
+import { useRouter } from "next/navigation";
 
 const HomePage = () => {
+  const router = useRouter();
+
+  const goToDetail = (ticketId: number) => {
+    router.push(`/app/user/home/detail/${ticketId}`);
+  };
   useEffect(() => {
     const userJson = localStorage.getItem("user");
     const user = userJson ? JSON.parse(userJson) : null;
@@ -65,13 +71,14 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-10 py-10">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Hello, User!</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Hello, vroh!</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tickets.map((ticket) => (
             <div
               key={ticket.ticketId}
-              className="relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
+              onClick={() => goToDetail(ticket.ticketId)}
+              className="relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
             >
               {/* Wishlist Heart */}
               <button
@@ -95,7 +102,6 @@ const HomePage = () => {
                 className="w-full h-48 object-cover"
               />
 
-              {/* Content */}
               {/* Content */}
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-gray-800">

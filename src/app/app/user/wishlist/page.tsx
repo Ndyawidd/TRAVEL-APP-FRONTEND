@@ -6,6 +6,7 @@ import {
   getUserWishlist,
   removeFromWishlist,
 } from "@/services/wishlistService";
+import { useRouter } from "next/navigation";
 
 const WishlistPage = () => {
   useEffect(() => {
@@ -19,6 +20,11 @@ const WishlistPage = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [wishlistData, setWishlistData] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+
+  const router = useRouter();
+  const goToDetail = (ticketId: number) => {
+    router.push(`/app/user/home/detail/${ticketId}`);
+  };
 
   useEffect(() => {
     if (userId === null) return;
@@ -83,7 +89,8 @@ const WishlistPage = () => {
           {filteredList.map((item) => (
             <div
               key={item.ticketId}
-              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+              onClick={() => goToDetail(item.ticketId)}
+              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer"
             >
               <img
                 src={item.image}
