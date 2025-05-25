@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { getOrdersByUser } from "@/services/orderService";
+import Link from "next/link"; // Import Link from next/link
 
 const statusColor = {
-  SUCCESSFUL: "text-green-600",
+  CONFIRMED: "text-green-600", // Updated to match backend schema
   PENDING: "text-orange-500",
   CANCELLED: "text-red-500",
 };
@@ -66,37 +67,42 @@ const HistoryPage = () => {
         {/* Order List */}
         <div className="space-y-6">
           {filtered.map((order) => (
-            <div
+            <Link
+              href={`/app/user/history/detail/${order.orderId}`} // Navigate to detail page
               key={order.orderId}
-              className="flex items-center bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition"
+              className="block" // Ensure Link is a block element
             >
-              <img
-                src={order.ticket?.image || "/images/placeholder.jpg"}
-                alt={order.ticket?.name}
-                className="w-32 h-32 object-cover"
-              />
-              <div className="flex-1 px-5 py-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    {order.ticket?.name}
-                  </h2>
-                  <span
-                    className={`text-sm font-bold ${
-                      statusColor[order.status as keyof typeof statusColor] ||
-                      "text-gray-500"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
+              <div
+                className="flex items-center bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition cursor-pointer" // Added cursor-pointer
+              >
+                <img
+                  src={order.ticket?.image || "/images/placeholder.jpg"}
+                  alt={order.ticket?.name}
+                  className="w-32 h-32 object-cover"
+                />
+                <div className="flex-1 px-5 py-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {order.ticket?.name}
+                    </h2>
+                    <span
+                      className={`text-sm font-bold ${
+                        statusColor[order.status as keyof typeof statusColor] ||
+                        "text-gray-500"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {order.ticket?.location}
+                  </p>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Order ID: {order.orderId}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-500">
-                  {order.ticket?.location}
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  Order ID: {order.orderId}
-                </p>
               </div>
-            </div>
+            </Link>
           ))}
 
           {filtered.length === 0 && (

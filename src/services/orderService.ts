@@ -36,3 +36,9 @@ export const updateOrderStatus = async (
   if (!res.ok) throw new Error("Failed to update order");
   return await res.json();
 };
+
+export const getOrderById = async (orderId: string) => {
+  const response = await fetch(`${API}/orders/${orderId}`);
+  if (!response.ok) throw new Error("Failed to fetch order");
+  return response.json();
+};
