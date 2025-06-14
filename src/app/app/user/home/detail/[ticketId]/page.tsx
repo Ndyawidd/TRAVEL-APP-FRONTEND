@@ -119,7 +119,7 @@ const DetailTicket = () => {
                 href={`/app/user/home/comment/${ticketId}`}
                 className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
               >
-                Show All >
+                Show All {">"}
               </Link>
             )}
           </h2>
@@ -128,7 +128,8 @@ const DetailTicket = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {previewReviews.map((review) => {
-                const hasResponse = review.responses && review.responses.length > 0;
+                const hasResponse =
+                  review.responses && review.responses.length > 0;
 
                 return (
                   <div
@@ -186,7 +187,9 @@ const DetailTicket = () => {
                                 </p>
                                 <p className="text-gray-500 text-xs mt-1">
                                   {response.createdAt
-                                    ? new Date(response.createdAt).toLocaleString("en-US", {
+                                    ? new Date(
+                                        response.createdAt
+                                      ).toLocaleString("en-US", {
                                         year: "numeric",
                                         month: "short",
                                         day: "numeric",
@@ -206,7 +209,8 @@ const DetailTicket = () => {
               })}
               {reviews.length > 2 && (
                 <p className="text-gray-500 text-center mt-4">
-                  {reviews.length - 2} more comments. Click "Show All" to see them!
+                  {reviews.length - 2} more comments. Click "Show All" to see
+                  them!
                 </p>
               )}
             </div>

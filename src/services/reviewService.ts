@@ -1,21 +1,49 @@
 const API = process.env.NEXT_PUBLIC_API_URL;
 
-export const postReview = async (reviewData: {
-  userId: number;
+export type Review = {
+  serId: number;
   orderId: string;
   ticketId: number;
   rating: number;
   comment: string;
   image?: string;
-}) => {
-  const response = await fetch(`${API}/reviews`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(reviewData),
-  });
-  if (!response.ok && response.status !== 201) throw new Error("Failed to submit review");
-  return response.json();
 };
+
+export const postReview = async (
+  review: Omit<Review, "id">
+): Promise<Review | null> => {
+  try {
+    const res = await fetch(`${API}/reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(review),
+    });
+    if (!res.ok) throw new Error("Failed to create Review");
+    return await res.json();
+  } catch (err) {
+    console.error("createReview error:", err);
+    return null;
+  }
+};
+
+// export const postReview = async (reviewData: {
+//   userId: number;
+//   orderId: string;
+//   ticketId: number;
+//   rating: number;
+//   comment: string;
+//   image?: string;
+// }) => {
+//   const response = await fetch(`${API}/reviews`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(reviewData),
+//   });
+//   if (!response.ok && response.status !== 201)
+//     throw new Error("Failed to submit review");
+//   return response.json();
+// };
+
 export const fetchReviewsByTicketId = async (ticketId: number) => {
   try {
     const res = await fetch(`${API}/reviews/ticket/${ticketId}`);
@@ -73,7 +101,10 @@ export const deleteReview = async (reviewId: number) => {
   return response.status === 204;
 };
 
-export const editResponse = async (responseId: number, newResponseText: string) => {
+export const editResponse = async (
+  responseId: number,
+  newResponseText: string
+) => {
   const response = await fetch(`${API}/reviews/response/${responseId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

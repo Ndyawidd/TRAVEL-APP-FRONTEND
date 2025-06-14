@@ -6,15 +6,26 @@ export const getUserById = async (userId: number) => {
   return await res.json();
 };
 
-export const updateUserProfile = async (userId: number, data: any) => {
+// export const updateUserProfile = async (userId: number, data: any) => {
+//   const res = await fetch(`${API}/users/${userId}`, {
+//     method: "PUT",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(data),
+//   });
+//   if (!res.ok) throw new Error("Failed to update profile");
+//   return await res.json();
+// };
+
+export const updateUserProfile = async (userId: number, data: FormData) => {
   const res = await fetch(`${API}/users/${userId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: data,
   });
+
   if (!res.ok) throw new Error("Failed to update profile");
   return await res.json();
 };
+
 
 export const deleteUser = async (userId: number) => {
   const res = await fetch(`${API}/users/${userId}`, {

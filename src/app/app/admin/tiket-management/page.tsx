@@ -28,34 +28,49 @@ const TicketManagementPage = () => {
   };
 
   const handleUpdateTicket = async (updatedTicket: any) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/tickets/${updatedTicket.ticketId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedTicket),
-        }
-      );
+  try {
+    const formData = new FormData();
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Gagal update tiket");
-      }
+    // Tambahkan semua field ke formData
+    formData.append("name", updatedTicket.name);
+    formData.append("location", updatedTicket.location);
+    formData.append("price", updatedTicket.price.toString());
+    formData.append("rating", updatedTicket.rating.toString());
 
-      const result = await res.json();
-      setTickets((prev) =>
-        prev.map((ticket) =>
-          ticket.ticketId === updatedTicket.ticketId ? result : ticket
-        )
-      );
-      setEditingTicket(null); // Reset edit state
-      alert("Tiket berhasil diupdate!");
-    } catch (err: any) {
-      console.error("Gagal update tiket:", err);
-      alert(err.message);
+    // Kalau image diubah, tambahkan juga
+    if (updatedTicket.image instanceof File) {
+      formData.append("image", updatedTicket.image);
     }
-  };
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/tickets/${updatedTicket.ticketId}`,
+      {
+        method: "PUT",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("Server returned error response:", data);
+      throw new Error(data.error || "Gagal update tiket");
+    }
+
+    setTickets((prev) =>
+      prev.map((ticket) =>
+        ticket.ticketId === updatedTicket.ticketId ? data.data : ticket
+      )
+    );
+    setEditingTicket(null);
+    alert("Tiket berhasil diupdate!");
+  } catch (err: any) {
+    console.error("Gagal update tiket:", err);
+    alert("Update error: " + err.message);
+  }
+};
+
+
 
   const handleDelete = async (id: number) => {
     try {

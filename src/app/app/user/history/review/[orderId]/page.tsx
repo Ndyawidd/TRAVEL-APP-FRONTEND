@@ -23,7 +23,8 @@ export default function ReviewOrderPage() {
   const [error, setError] = useState<string | null>(null);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
-  const [image, setImage] = useState<string | null>(null); // Store Base64 image
+  // const [image, setImage] = useState<string | null>(null); // Store Base64 image
+  const [image, setImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -73,12 +74,16 @@ export default function ReviewOrderPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setImage(base64);
-    };
-    reader.readAsDataURL(file);
+    setImage(file); // simpan file
+  };
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   const handleSubmit = async () => {
@@ -95,17 +100,23 @@ export default function ReviewOrderPage() {
     }
 
     try {
+      let base64Image = null;
+      if (image) {
+        base64Image = await convertToBase64(image);
+      }
+
       const reviewData = {
         userId: user.userId,
         orderId,
         ticketId: orderDetails.ticketId,
         rating,
         comment,
-        image: image || undefined, // Include image if uploaded
+        image: base64Image, // base64 string
       };
+
       await postReview(reviewData);
       alert("Review submitted successfully!");
-      router.push(`/app/user/home/detail/${orderDetails.ticketId}`); // Fixed ticketId
+      router.push(`/app/user/home/detail/${orderDetails.ticketId}`);
     } catch (err) {
       console.error("Failed to submit review:", err);
       setError("Failed to submit review. Please try again.");
@@ -240,7 +251,7 @@ export default function ReviewOrderPage() {
           {image && (
             <div className="mb-4">
               <img
-                src={image}
+                src={URL.createObjectURL(image)}
                 alt="Uploaded Preview"
                 className="w-32 h-32 object-cover rounded-lg"
               />

@@ -61,9 +61,22 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     if (!userId) return;
+
     try {
-      console.log("Sending formData to backend:", formData);
-      await updateUserProfile(userId, formData);
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("username", formData.username);
+      form.append("email", formData.email);
+      form.append("role", formData.role);
+      form.append("password", formData.password);
+      form.append("balance", formData.balance.toString());
+
+      if (formData.image) {
+        form.append("image", formData.image); // kirim file image
+      }
+
+      const updatedUser = await updateUserProfile(userId, form);
+      console.log("Update success:", updatedUser);
       alert("Profile updated!");
     } catch (err) {
       console.error("Update error:", err);
@@ -102,7 +115,8 @@ const ProfilePage = () => {
       const base64 = reader.result as string;
       setFormData((prev) => ({
         ...prev,
-        image: base64,
+        image: base64, // Untuk preview
+        imageFile: file, // Untuk dikirim ke backend
       }));
     };
     reader.readAsDataURL(file);
